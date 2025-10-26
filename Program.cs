@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using project.Forms;
 
 namespace project
 {
@@ -9,7 +10,7 @@ namespace project
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.Run(new BicyclesForm());
+            Application.Run(new FormBicycles());
         }
     }
 }
