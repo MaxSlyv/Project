@@ -7,109 +7,192 @@ namespace project.Forms
 {
     public partial class BicyclesForm : Form
     {
-        // Контейнер для списку велосипедів
         public List<Bicycle> listBicycles = new List<Bicycle>();
-
-        // Об'єкт для роботи з БД
         Db db = new Db();
-
         public BicyclesForm()
         {
             InitializeComponent();
         }
 
-        // Завантаження даних при старті форми
         private void BicyclesForm_Load(object sender, EventArgs e)
         {
+            dgvBicycles.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvBicycles.MultiSelect = false;
+            dgvBicycles.ReadOnly = true; 
+
             LoadData();
             ShowData();
         }
 
-        // Метод завантаження велосипедів з бази даних
         public void LoadData()
         {
             string query = "SELECT * FROM Bicycles";
             db.Execute(query, ref listBicycles, reader => new Bicycle
             {
-                Id = reader.GetInt32("Id_bicycle"),
-                ModelName = reader.GetString("Model_name"),
-                BrandId = reader.GetInt32("Id_brand"),
-                Type = reader.GetString("Type1"),
-                FrameSize = reader.GetString("Frame_size"),
-                FrameMaterial = reader.GetString("Frame_material"),
-                GearCount = reader.GetInt32("Gear_count"),
+                Id_bicycle = reader.GetInt32("Id_bicycle"),
+                Model_name = reader.GetString("Model_name"),
+                Id_brand = reader.GetInt32("Id_brand"),
+                Type1 = reader.GetString("Type1"),
+                Frame_size = reader.GetString("Frame_size"),
+                Frame_material = reader.GetString("Frame_material"),
+                Gear_count = reader.GetInt32("Gear_count"),
                 Price = reader.GetDecimal("Price"),
-                StockQuantity = reader.GetInt32("Stock_quantity")
+                Stock_quantity = reader.GetInt32("Stock_quantity"),
+                Brand = new Brand()
+                {
+                    Id_brand = reader.GetInt32("Id_brand"),
+                    Brand_name = "",
+                    Country = ""
+                }
             });
         }
 
-        // Відображення даних на інтерфейсі
         public void ShowData()
         {
             dgvBicycles.Rows.Clear();
             foreach (var bike in listBicycles)
             {
-                dgvBicycles.Rows.Add(
-                    bike.Id,
-                    bike.ModelName,
-                    bike.BrandId,
-                    bike.Type,
-                    bike.FrameSize,
-                    bike.FrameMaterial,
-                    bike.GearCount,
+                dgvBicycles.Rows.Add
+                (
+                    bike.Id_bicycle,
+                    bike.Model_name,
+                    bike.Id_brand,
                     bike.Price,
-                    bike.StockQuantity
+                    bike.Stock_quantity
                 );
             }
         }
 
-        // Перевірка введених даних
-        public bool CheckDataBicycle()
+        public bool CheckData()
         {
             if (tbModel.Text.Trim() == "")
             {
-                MessageBox.Show("Поле 'Модель' є обов'язковим.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Вкажіть модель!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
             if (tbBrandId.Text.Trim() == "")
             {
-                MessageBox.Show("Поле 'ID бренду' є обов'язковим.", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Вкажіть ID бренду!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            if (tbPrice.Text.Trim() == "")
+            {
+                MessageBox.Show("Вкажіть ціну!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            if (tbStock.Text.Trim() == "")
+            {
+                MessageBox.Show("Вкажіть кількість!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
             return true;
         }
 
-        // Додавання нового велосипеда до бази
         public void SaveDataToDB()
         {
-            if (CheckDataBicycle())
+            if (!CheckData()) return;
+
+            decimal price = decimal.Parse
+            (
+                tbPrice.Text.Trim().Replace(',', '.'),
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+
+            Bicycle bike = new Bicycle
             {
-                Bicycle bike = new Bicycle
+                Model_name = tbModel.Text.Trim(),
+                Id_brand = int.Parse(tbBrandId.Text.Trim()),
+                Type1 = "Гірський",
+                Frame_size = "M",
+                Frame_material = "Алюміній",
+                Gear_count = 18,
+                Price = price,
+                Stock_quantity = int.Parse(tbStock.Text.Trim()),
+                Brand = new Brand()
                 {
-                    ModelName = tbModel.Text.Trim(),
-                    BrandId = int.Parse(tbBrandId.Text.Trim()),
-                    Type = tbType.Text.Trim(),
-                    FrameSize = tbFrameSize.Text.Trim(),
-                    FrameMaterial = tbFrameMaterial.Text.Trim(),
-                    GearCount = int.Parse(tbGearCount.Text.Trim()),
-                    Price = decimal.Parse(tbPrice.Text.Trim()),
-                    StockQuantity = int.Parse(tbStock.Text.Trim())
-                };
+                    Id_brand = int.Parse(tbBrandId.Text.Trim()),
+                    Brand_name = "",
+                    Country = ""
+                }
+            };
 
-                string query = $"INSERT INTO Bicycles " +
-                               $"(Model_name, Id_brand, Type1, Frame_size, Frame_material, Gear_count, Price, Stock_quantity) " +
-                               $"VALUES ('{bike.ModelName}', {bike.BrandId}, '{bike.Type}', '{bike.FrameSize}', '{bike.FrameMaterial}', {bike.GearCount}, {bike.Price}, {bike.StockQuantity})";
+            string query = $"INSERT INTO Bicycles " + "(Model_name, Id_brand, Type1, Frame_size, Frame_material, Gear_count, Price, Stock_quantity) " +
+                        $"VALUES ('{bike.Model_name}', {bike.Id_brand}, '{bike.Type1}', '{bike.Frame_size}', '{bike.Frame_material}', {bike.Gear_count}, {bike.Price}, {bike.Stock_quantity})";
 
-                db.ExecuteNonQuery(query);
-                listBicycles.Add(bike);
-                ShowData();
-            }
+            db.ExecuteNonQuery(query);
+            LoadData();
+            ShowData();
         }
 
-        // Кнопка "Додати"
         private void btnAdd_Click(object sender, EventArgs e)
         {
             SaveDataToDB();
+        }
+
+        public int GetSelectedId()
+        {
+            if (dgvBicycles.CurrentRow == null)
+            {
+                MessageBox.Show("Виберіть рядок!", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return -1;
+            }
+
+            return Convert.ToInt32(dgvBicycles.CurrentRow.Cells["Id_bicycle"].Value);
+        }
+
+        private void dgvBicycles_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            tbModel.Text = dgvBicycles.Rows[e.RowIndex].Cells["Model_name"].Value.ToString();
+            tbBrandId.Text = dgvBicycles.Rows[e.RowIndex].Cells["Id_brand"].Value.ToString();
+            tbPrice.Text = dgvBicycles.Rows[e.RowIndex].Cells["Price"].Value.ToString();
+            tbStock.Text = dgvBicycles.Rows[e.RowIndex].Cells["Stock_quantity"].Value.ToString();
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            int id = GetSelectedId();
+            if (id == -1) return;
+
+            var confirm = MessageBox.Show("Видалити запис?", "Підтвердження", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (confirm == DialogResult.No) return;
+
+            string query = $"DELETE FROM Bicycles WHERE Id_bicycle = {id}";
+            db.ExecuteNonQuery(query);
+
+            LoadData();
+            ShowData();
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            int id = GetSelectedId();
+            if (id == -1) return;
+            if (!CheckData()) return;
+
+            decimal price = decimal.Parse
+            (
+                tbPrice.Text.Trim().Replace(',', '.'),
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+
+            string query = $"UPDATE Bicycles SET " +
+                           $"Model_name = '{tbModel.Text.Trim()}', " +
+                           $"Id_brand = {tbBrandId.Text.Trim()}, " +
+                           $"Type1 = 'Гірський', " +
+                           $"Frame_size = 'M', " +
+                           $"Frame_material = 'Алюміній', " +
+                           $"Gear_count = 18, " +
+                           $"Price = {price}, " +
+                           $"Stock_quantity = {tbStock.Text.Trim()} " +
+                           $"WHERE Id_bicycle = {id}";
+
+            db.ExecuteNonQuery(query);
+
+            LoadData();
+            ShowData();
         }
     }
 }

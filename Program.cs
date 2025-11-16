@@ -10,7 +10,7 @@ namespace project
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.Run(new FormBicycles());
+            Application.Run(new BicyclesForm());
         }
     }
 }
