@@ -10,7 +10,14 @@ namespace project
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.Run(new BicyclesForm());
+            using (LoginForm loginForm = new LoginForm())
+            {
+                if (loginForm.ShowDialog() == DialogResult.OK)
+                {
+                    Application.Run(new BicyclesForm());
+                }
+            }
         }
     }
 }
+

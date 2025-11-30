@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\C#\\Курсовий\\project\\project.csproj": {}
+    "D:\\projects\\Курсовий\\project\\project.csproj": {}
   },
   "projects": {
-    "D:\\C#\\Курсовий\\project\\project.csproj": {
+    "D:\\projects\\Курсовий\\project\\project.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\C#\\Курсовий\\project\\project.csproj",
+        "projectUniqueName": "D:\\projects\\Курсовий\\project\\project.csproj",
         "projectName": "project",
-        "projectPath": "D:\\C#\\Курсовий\\project\\project.csproj",
+        "projectPath": "D:\\projects\\Курсовий\\project\\project.csproj",
         "packagesPath": "C:\\Users\\levma\\.nuget\\packages\\",
-        "outputPath": "D:\\C#\\Курсовий\\project\\obj\\",
+        "outputPath": "D:\\projects\\Курсовий\\project\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\levma\\AppData\\Roaming\\NuGet\\NuGet.Config"
