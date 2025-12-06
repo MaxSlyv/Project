@@ -26,14 +26,13 @@ namespace project.Forms
             ShowData();
         }
 
-        // Загрузка данных из базы
+        //завантаження з бази
         public void LoadData()
         {
             string query = @"
                 SELECT b.*, br.Brand_name, br.Country 
                 FROM Bicycles b
-                LEFT JOIN Brands br ON b.Id_brand = br.Id_brand
-            ";
+                LEFT JOIN Brands br ON b.Id_brand = br.Id_brand";
 
             db.Execute(query, ref listBicycles, reader => new Bicycle
             {
@@ -55,7 +54,7 @@ namespace project.Forms
             });
         }
 
-        // Загрузка списка брендов в ComboBox
+        //завантаження в комбобокс
         private void LoadBrands()
         {
             cbBrandFilter.Items.Clear();
@@ -70,21 +69,18 @@ namespace project.Forms
                 Country = reader.GetString("Country")
             });
 
-            foreach (var brand in brands)
-                cbBrandFilter.Items.Add(new ComboBoxItem(brand.Brand_name, brand.Id_brand));
-
+            foreach (var brand in brands) cbBrandFilter.Items.Add(new ComboBoxItem(brand.Brand_name, brand.Id_brand));
             cbBrandFilter.SelectedIndex = 0;
         }
 
-        // Отображение данных в DataGridView
+        //відображення в датагрід
         public void ShowData()
         {
             dgvBicycles.Rows.Clear();
             int displayId = 1;
 
             int selectedBrandId = 0;
-            if (cbBrandFilter.SelectedItem is ComboBoxItem item)
-                selectedBrandId = item.Value;
+            if (cbBrandFilter.SelectedItem is ComboBoxItem item) selectedBrandId = item.Value;
 
             string searchModel = tbSearchModel.Text.Trim().ToLower();
 
@@ -112,7 +108,7 @@ namespace project.Forms
             }
         }
 
-        // Проверка заполнения полей
+        //перевірка заповнення
         public bool CheckData()
         {
             if (string.IsNullOrWhiteSpace(tbModel.Text))
@@ -138,7 +134,7 @@ namespace project.Forms
             return true;
         }
 
-        // Добавление нового велосипеда
+        //додавання нового велосипеда
         public void SaveDataToDB()
         {
             if (!CheckData()) return;
@@ -249,7 +245,7 @@ namespace project.Forms
         private void FilterChanged(object sender, EventArgs e) => ShowData();
         private void tbSearchModel_TextChanged(object sender, EventArgs e) => ShowData();
 
-        // Для ComboBox
+        //комбобокс
         public class ComboBoxItem
         {
             public string Text { get; set; }
@@ -260,6 +256,40 @@ namespace project.Forms
                 Value = value;
             }
             public override string ToString() => Text;
+        }
+        private void BtnImportCsv_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "CSV files (*.csv)|*.csv";
+                if (ofd.ShowDialog() != DialogResult.OK) return;
+
+                string[] lines = System.IO.File.ReadAllLines(ofd.FileName);
+
+                foreach (string line in lines)
+                {
+                    string[] parts = line.Split(',');
+                    if (parts.Length < 8) continue;
+
+                    string model = parts[0].Trim();
+                    int brandId = int.Parse(parts[1].Trim());
+                    string type = parts[2].Trim();
+                    string frameSize = parts[3].Trim();
+                    string frameMaterial = parts[4].Trim();
+                    int gearCount = int.Parse(parts[5].Trim());
+                    decimal price = decimal.Parse(parts[6].Trim(), System.Globalization.CultureInfo.InvariantCulture);
+                    int stock = int.Parse(parts[7].Trim());
+
+                    string query = $"INSERT INTO Bicycles (Model_name, Id_brand, Type1, Frame_size, Frame_material, Gear_count, Price, Stock_quantity) " +
+                                   $"VALUES ('{model}', {brandId}, '{type}', '{frameSize}', '{frameMaterial}', {gearCount}, {price}, {stock})";
+
+                    db.ExecuteNonQuery(query);
+                }
+
+                LoadData();
+                ShowData();
+                MessageBox.Show("Імпорт CSV завершено!", "Успіх", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
     }
 }

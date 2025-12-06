@@ -12,10 +12,7 @@ namespace project
             ApplicationConfiguration.Initialize();
             using (LoginForm loginForm = new LoginForm())
             {
-                if (loginForm.ShowDialog() == DialogResult.OK)
-                {
-                    Application.Run(new BicyclesForm());
-                }
+                if (loginForm.ShowDialog() == DialogResult.OK) { Application.Run(new BicyclesForm());}
             }
         }
     }

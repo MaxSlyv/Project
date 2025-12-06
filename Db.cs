@@ -22,8 +22,7 @@ namespace project
             using var cmd = new MySqlCommand(query, conn);
             using var reader = cmd.ExecuteReader();
 
-            while (reader.Read())
-                list.Add(map(reader));
+            while (reader.Read()) list.Add(map(reader));
         }
 
         public void ExecuteNonQuery(string query)

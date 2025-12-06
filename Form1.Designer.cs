@@ -24,6 +24,7 @@ namespace project.Forms
         private Button btnAdd;
         private Button btnEdit;
         private Button btnDelete;
+        private Button btnImportCsv;
 
         private Label lblModel;
         private Label lblBrandId;
@@ -43,9 +44,12 @@ namespace project.Forms
             base.Dispose(disposing);
         }
 
+
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            this.BackgroundImage = Image.FromFile(@"D:\4 курс\Курсовий\background_login.jpg");
+            this.BackgroundImageLayout = ImageLayout.Stretch;
 
             this.dgvBicycles = new DataGridView();
 
@@ -65,6 +69,7 @@ namespace project.Forms
             this.btnAdd = new Button();
             this.btnEdit = new Button();
             this.btnDelete = new Button();
+            this.btnImportCsv = new Button();
 
             this.lblModel = new Label();
             this.lblBrandId = new Label();
@@ -81,7 +86,7 @@ namespace project.Forms
             ((System.ComponentModel.ISupportInitialize)(this.dgvBicycles)).BeginInit();
             this.SuspendLayout();
 
-            //DataGridView
+            //датагрід
             this.dgvBicycles.AllowUserToAddRows = false;
             this.dgvBicycles.AllowUserToDeleteRows = false;
             this.dgvBicycles.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -104,13 +109,13 @@ namespace project.Forms
             this.dgvBicycles.Columns.Add("RealId", "ID"); 
             this.dgvBicycles.Columns["RealId"].Visible = false;
 
-            // Автосортировка колонок
+            //автосортування
             foreach (DataGridViewColumn col in dgvBicycles.Columns)
             {
                 col.SortMode = DataGridViewColumnSortMode.Automatic;
             }
 
-            //Labels и TextBox
+            //кнопки та текст
             int lblX = 20, tbX = 150, y = 20, dy = 30;
 
             this.lblModel.Text = "Модель:";
@@ -159,7 +164,6 @@ namespace project.Forms
             this.tbSearchModel.TextChanged += new System.EventHandler(this.tbSearchModel_TextChanged);
             y += dy;
 
-            //ComboBox для фильтра
             this.lblBrandFilter.Text = "Фільтр по бренду:";
             this.lblBrandFilter.Location = new System.Drawing.Point(20, 290);
             this.cbBrandFilter.Location = new System.Drawing.Point(150, 290);
@@ -167,7 +171,7 @@ namespace project.Forms
             this.cbBrandFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             this.cbBrandFilter.SelectedIndexChanged += new System.EventHandler(this.FilterChanged);
 
-            //Buttons
+            //кнопки
             this.btnAdd.Text = "Додати";
             this.btnAdd.Location = new System.Drawing.Point(350, 20);
             this.btnAdd.Size = new System.Drawing.Size(120, 30);
@@ -183,7 +187,9 @@ namespace project.Forms
             this.btnDelete.Size = new System.Drawing.Size(120, 30);
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
 
-            //Добавляем контролы на форму
+            this.btnImportCsv.Text = "Імпорт CSV"; this.btnImportCsv.Location = new System.Drawing.Point(350, 140);
+            this.btnImportCsv.Size = new System.Drawing.Size(120, 30); this.btnImportCsv.Click += new System.EventHandler(this.BtnImportCsv_Click);
+
             this.Controls.Add(this.dgvBicycles);
 
             this.Controls.Add(this.tbModel);
@@ -211,8 +217,9 @@ namespace project.Forms
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnDelete);
+            this.Controls.Add(this.btnImportCsv);
 
-            //Настройки формы
+            //налаштування форми
             this.ClientSize = new System.Drawing.Size(800, 600);
             this.Name = "BicyclesForm";
             this.Text = "Склад велосипедів";
